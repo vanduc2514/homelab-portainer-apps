@@ -1,0 +1,12 @@
+services:
+  traefik:
+    image: traefik:v3.3.2
+    container_name: traefik
+    volumes:
+      - traefik-data:/etc/traefik
+
+volumes:
+  traefik-data:
+    external: true
+  origin-certificates:
+    external: true
