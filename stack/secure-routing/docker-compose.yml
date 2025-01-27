@@ -4,6 +4,8 @@ services:
     container_name: traefik
     volumes:
       - traefik-data:/etc/traefik
+      - origin-certificates:/etc/ssl/certs
+      - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
   traefik-data:
