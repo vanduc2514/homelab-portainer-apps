@@ -1,16 +1,20 @@
 services:
   traefik:
-    build:
-      context: ../../images/traefik
-      args:
-        TRAEFIK_PLUGIN_KEYCLOAKOPENID_CLIENT_SECRET: ${TRAEFIK_PLUGIN_KEYCLOAKOPENID_CLIENT_SECRET}
-    image: traefik:v3.3.2-homelab-v1
+    image: traefik:v3.3.2
     container_name: traefik
     restart: unless-stopped
-    user: 1000:docker
+    entrypoint: /custom-entrypoint.sh
+    environment:
+      TRAEFIK_PLUGIN_KEYCLOAKOPENID_CLIENT_ID:
+        ${TRAEFIK_PLUGIN_KEYCLOAKOPENID_CLIENT_ID}
+      TRAEFIK_PLUGIN_KEYCLOAKOPENID_CLIENT_SECRET:
+        ${TRAEFIK_PLUGIN_KEYCLOAKOPENID_CLIENT_SECRET}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /etc/ssl/certs:/etc/ssl/certs
+      - ./traefik.yml:/etc/traefik/traefik.yml
+      - ./dynamic:/etc/traefik/dynamic
+      - ./custom-entrypoint.sh:/custom-entrypoint.sh
     networks:
       - external-routing
       - cloudflared
@@ -29,6 +33,7 @@ services:
     image: traefik/whoami:v1.10
     container_name: whoami
     restart: unless-stopped
+    user: "1000"
     labels:
       - traefik.enable=true
       - traefik.docker.network=external-routing

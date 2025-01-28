@@ -25,37 +25,6 @@ tls:
     - certFile: /etc/ssl/certs/nvduc.dev.tld.pem
       keyFile: /etc/ssl/certs/nvduc.dev.tld.key
 
-# HTTP configuration for Traefik
-http:
-  middlewares:
-    # Used for applications that don't provide their own OAuth capability
-    forward-auth-keycloak:
-      plugin:
-        keycloakopenid:
-          # Keycloak server URL for authentication
-          KeycloakURL: https://auth.vanduc2514.io.vn
-          
-          # OAuth client credentialsm configured in Keycloak server
-          ClientID: cloudflared-web-client
-          ClientSecret: ${TRAEFIK_PLUGIN_KEYCLOAKOPENID_CLIENT_SECRET}
-          
-          # Keycloak realm configuration
-          KeycloakRealm: master
-          
-          # OAuth scope requested during authentication
-          Scope: openid profile email
-          
-          # Name of the cookie that will store the authentication token
-          TokenCookieName: AUTH_WEB_CLIENT_HOMELAB
-          
-          # Disable sending authentication in headers
-          # Authentication will be handled via cookies instead
-          UseAuthHeader: false
-          
-          # Paths to exclude from authentication
-          # Common for resources that don't require auth
-          IgnorePathPrefixes: /favicon.ico
-
 # Configure providers that Traefik will use to discover services
 providers:
   # Docker provider configuration
@@ -69,8 +38,9 @@ providers:
   # File provider configuration
   file:
     # Directory containing additional static configurations
-    # Note: This directory is COPY'd into the Docker container via Dockerfile
-    directory: /etc/traefik/static
+    # Note: This directory is mounted into the Docker container
+    directory: /etc/traefik/dynamic
+    watch: true
 
 # Experimental features configuration
 experimental:

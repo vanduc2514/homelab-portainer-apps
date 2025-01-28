@@ -1,0 +1,30 @@
+# HTTP configuration for Traefik
+http:
+  middlewares:
+    # Used for applications that don't provide their own OAuth capability
+    forward-auth-keycloak:
+      plugin:
+        keycloakopenid:
+          # Keycloak server URL for authentication
+          KeycloakURL: https://auth.vanduc2514.io.vn
+          
+          # OAuth client credentialsm configured in Keycloak server
+          ClientID: ${TRAEFIK_PLUGIN_KEYCLOAKOPENID_CLIENT_ID}
+          ClientSecret: ${TRAEFIK_PLUGIN_KEYCLOAKOPENID_CLIENT_SECRET}
+          
+          # Keycloak realm configuration
+          KeycloakRealm: master
+          
+          # OAuth scope requested during authentication
+          Scope: openid profile email
+          
+          # Name of the cookie that will store the authentication token
+          TokenCookieName: AUTH_WEB_CLIENT_HOMELAB
+          
+          # Disable sending authentication in headers
+          # Authentication will be handled via cookies instead
+          UseAuthHeader: false
+          
+          # Paths to exclude from authentication
+          # Common for resources that don't require auth
+          IgnorePathPrefixes: /favicon.ico
