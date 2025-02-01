@@ -9,8 +9,8 @@ http:
           KeycloakURL: https://auth.vanduc2514.io.vn
           
           # OAuth client credentialsm configured in Keycloak server
-          ClientID: ${TRAEFIK_PLUGIN_KEYCLOAKOPENID_CLIENT_ID}
-          ClientSecret: ${TRAEFIK_PLUGIN_KEYCLOAKOPENID_CLIENT_SECRET}
+          ClientID: 
+          ClientSecret: 
           
           # Keycloak realm configuration
           KeycloakRealm: master
