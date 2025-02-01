@@ -15,7 +15,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /etc/ssl/certs:/etc/ssl/certs
       - ./traefik.yml:/etc/traefik/traefik.yml
-      - ./dynamic:/etc/traefik/dynamic
+      - ./http.yml:/etc/traefik/dynamic/http.yml
       - ./custom-entrypoint.sh:/custom-entrypoint.sh
     networks:
       - external-routing
