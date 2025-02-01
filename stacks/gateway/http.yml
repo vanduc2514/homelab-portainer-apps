@@ -12,6 +12,12 @@ tls:
 # HTTP configuration for Traefik
 http:
   middlewares:
+    # For securing traefik
+    redirect-to-https:
+      redirectRegex:
+        regex: "^http://(.*)"
+        replacement: "https://$1"
+        permanent: true
     # Used for applications that don't provide their own OAuth capability
     forward-auth-keycloak:
       plugin:

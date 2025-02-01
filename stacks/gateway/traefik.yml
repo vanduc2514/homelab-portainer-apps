@@ -9,10 +9,24 @@ entryPoints:
   # HTTP entry point on port 80
   web:
     address: ":80"
+    http:
+      routers:
+        # Catch-all router for HTTP
+        http-catch-all:
+          rule: "Host(`*`)"
+          service: http-service
+          middlewares:
+            - redirect-to-https
   
   # HTTPS entry point on port 443
   websecure:
     address: ":443"
+    http:
+      routers:
+        # Catch-all router for HTTPS
+        https-catch-all:
+          rule: "Host(`*`)"
+          service: https-service
 
 # Configure providers that Traefik will use to discover services
 providers:
