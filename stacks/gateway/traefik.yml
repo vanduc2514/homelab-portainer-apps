@@ -1,55 +1,55 @@
-# Logging configuration
-log:
-  # Set log level to DEBUG for detailed logging during development
-  # Available levels: ERROR, DEBUG, PANIC, FATAL, WARN, INFO
-  level: DEBUG
+# # Logging configuration
+# log:
+#   # Set log level to DEBUG for detailed logging during development
+#   # Available levels: ERROR, DEBUG, PANIC, FATAL, WARN, INFO
+#   level: DEBUG
 
-# Define entry points for incoming traffic
-entryPoints:
-  # HTTP entry point on port 80
-  web:
-    address: ":80"
-    http:
-      routers:
-        # Catch-all router for HTTP
-        http-catch-all:
-          rule: "Host(`*`)"
-          service: http-service
-          middlewares:
-            - redirect-to-https
+# # Define entry points for incoming traffic
+# entryPoints:
+#   # HTTP entry point on port 80
+#   web:
+#     address: ":80"
+#     http:
+#       routers:
+#         # Catch-all router for HTTP
+#         http-catch-all:
+#           rule: "Host(`*`)"
+#           service: http-service
+#           middlewares:
+#             - redirect-to-https
   
-  # HTTPS entry point on port 443
-  websecure:
-    address: ":443"
-    http:
-      routers:
-        # Catch-all router for HTTPS
-        https-catch-all:
-          rule: "Host(`*`)"
-          service: https-service
+#   # HTTPS entry point on port 443
+#   websecure:
+#     address: ":443"
+#     http:
+#       routers:
+#         # Catch-all router for HTTPS
+#         https-catch-all:
+#           rule: "Host(`*`)"
+#           service: https-service
 
-# Configure providers that Traefik will use to discover services
-providers:
-  # Docker provider configuration
-  docker:
-    # Unix socket to communicate with Docker daemon
-    # Note: This socket must be mounted in the Traefik container
-    endpoint: "unix:///var/run/docker.sock"
-    # Services must be explicitly enabled in Docker labels
-    exposedByDefault: false
+# # Configure providers that Traefik will use to discover services
+# providers:
+#   # Docker provider configuration
+#   docker:
+#     # Unix socket to communicate with Docker daemon
+#     # Note: This socket must be mounted in the Traefik container
+#     endpoint: "unix:///var/run/docker.sock"
+#     # Services must be explicitly enabled in Docker labels
+#     exposedByDefault: false
   
-  # File provider configuration
-  file:
-    # Directory containing additional static configurations
-    # Note: This directory is mounted into the Docker container
-    directory: /etc/traefik/dynamic
-    watch: true
+#   # File provider configuration
+#   file:
+#     # Directory containing additional static configurations
+#     # Note: This directory is mounted into the Docker container
+#     directory: /etc/traefik/dynamic
+#     watch: true
 
-# Experimental features configuration
-experimental:
-  # Plugin configuration
-  plugins:
-    # Keycloak OpenID plugin for authentication
-    keycloakopenid:
-      moduleName: "github.com/Gwojda/keycloakopenid"
-      version: "v0.1.35"
+# # Experimental features configuration
+# experimental:
+#   # Plugin configuration
+#   plugins:
+#     # Keycloak OpenID plugin for authentication
+#     keycloakopenid:
+#       moduleName: "github.com/Gwojda/keycloakopenid"
+#       version: "v0.1.35"
