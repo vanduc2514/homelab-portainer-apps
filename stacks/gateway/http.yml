@@ -1,3 +1,14 @@
+tls:
+  # List of certificates for different domains
+  # Note: All certificate files must be mounted in Docker container to /etc/ssl/certs/
+  certificates:
+    # Certificate for *.vanduc2514.io.vn
+    - certFile: /etc/ssl/certs/vanduc2514.io.vn.tld.pem
+      keyFile: /etc/ssl/certs/vanduc2514.io.vn.tld.key
+    # Certificate for *.nvduc.dev
+    - certFile: /etc/ssl/certs/nvduc.dev.tld.pem
+      keyFile: /etc/ssl/certs/nvduc.dev.tld.key
+
 # HTTP configuration for Traefik
 http:
   middlewares:
