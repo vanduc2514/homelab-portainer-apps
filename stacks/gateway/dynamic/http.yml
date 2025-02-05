@@ -1,0 +1,47 @@
+tls:
+  # List of certificates for different domains
+  # Note: All certificate files must be mounted in Docker container to /etc/ssl/certs/
+  certificates:
+    # Certificate for *.vanduc2514.io.vn
+    - certFile: /etc/ssl/certs/vanduc2514.io.vn.tld.pem
+      keyFile: /etc/ssl/certs/vanduc2514.io.vn.tld.key
+    # Certificate for *.nvduc.dev
+    - certFile: /etc/ssl/certs/nvduc.dev.tld.pem
+      keyFile: /etc/ssl/certs/nvduc.dev.tld.key
+
+# HTTP configuration for Traefik
+http:
+  middlewares:
+    # For securing traefik
+    redirect-to-https:
+      redirectRegex:
+        regex: "^http://(.*)"
+        replacement: "https://$1"
+        permanent: true
+    # Used for applications that don't provide their own OAuth capability
+    forward-auth-keycloak:
+      plugin:
+        keycloakopenid:
+          # Keycloak server URL for authentication
+          KeycloakURL: https://auth.vanduc2514.io.vn
+          
+          # OAuth client credentialsm configured in Keycloak server
+          ClientID: 
+          ClientSecret: 
+          
+          # Keycloak realm configuration
+          KeycloakRealm: master
+          
+          # OAuth scope requested during authentication
+          Scope: openid profile email
+          
+          # Name of the cookie that will store the authentication token
+          TokenCookieName: AUTH_WEB_CLIENT_HOMELAB
+          
+          # Disable sending authentication in headers
+          # Authentication will be handled via cookies instead
+          UseAuthHeader: false
+          
+          # Paths to exclude from authentication
+          # Common for resources that don't require auth
+          IgnorePathPrefixes: /favicon.ico

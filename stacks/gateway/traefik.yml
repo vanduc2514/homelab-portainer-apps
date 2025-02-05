@@ -1,0 +1,37 @@
+# Logging configuration
+log:
+  # Set log level to DEBUG for detailed logging during development
+  # Available levels: ERROR, DEBUG, PANIC, FATAL, WARN, INFO
+  level: DEBUG
+
+# Define entry points for incoming traffic
+entryPoints:  
+  # HTTPS entry point on port 443
+  websecure:
+    address: ":443"
+
+# Configure providers that Traefik will use to discover services
+providers:
+  # Docker provider configuration
+  docker:
+    # Unix socket to communicate with Docker daemon
+    # Note: This socket must be mounted in the Traefik container
+    endpoint: "unix:///var/run/docker.sock"
+    # Services must be explicitly enabled in Docker labels
+    exposedByDefault: false
+  
+  # File provider configuration
+  file:
+    # Directory containing additional static configurations
+    # Note: This directory is mounted into the Docker container
+    directory: /etc/traefik/dynamic
+    watch: true
+
+# Experimental features configuration
+experimental:
+  # Plugin configuration
+  plugins:
+    # Keycloak OpenID plugin for authentication
+    keycloakopenid:
+      moduleName: "github.com/Gwojda/keycloakopenid"
+      version: "v0.1.35"
