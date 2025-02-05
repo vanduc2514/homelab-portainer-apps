@@ -1,0 +1,62 @@
+name: Deploy stacks to Portainer
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  generate-deployment-stacks-matrix:
+    name: Generate deployment stacks matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Generate matrix from /stacks directory 
+        id: set-matrix
+        shell: bash
+        run: |
+          echo "Scanning for stacks..."
+          matrix='{"include":['
+          first=1
+          for dir in stacks/*; do
+            if [ -d "$dir" ] && [ -f "$dir/docker-compose.yml" ]; then
+              stack_name=$(basename "$dir")
+              stack_definition="$dir/docker-compose.yml"
+              if [ $first -eq 1 ]; then
+                first=0
+              else
+                matrix+=","
+              fi
+              matrix+="{\"stack_name\":\"${stack_name}\",\"stack_definition\":\"${stack_definition}\"}"
+              echo "Found stack: ${stack_name} at ${stack_definition}"
+            fi
+          done
+          matrix+=']}'
+          echo "Resulting matrix: $matrix"
+          echo "::set-output name=matrix::$matrix"
+
+  deploy-stacks-matrix:
+    name: Deploy Stacks to Portainer
+    needs: generate-deployment-stacks-matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GITHUB_REF: ${{ github.ref }}
+    strategy:
+      matrix: ${{ fromJson(needs.generate-deployment-stacks-matrix.outputs.matrix) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Deploy stack to Portainer
+        uses: carlrygart/portainer-stack-deploy@v1
+        with:
+          portainer-host: ${{ env.PORTAINER_HOST }}
+          username: ${{ secrets.PORTAINER_USERNAME }}
+          password: ${{ secrets.PORTAINER_PASSWORD }}
+          stack-name: ${{ matrix.stack_name }}
+          stack-definition: ${{ matrix.stack_definition }}
