@@ -63,6 +63,7 @@ jobs:
           url: ${{ vars.PORTAINER_HOST }}
           token: ${{ secrets.PORTAINER_TOKEN }}
           type: repo
+          standalone: true
           ref: refs/heads/master
           name: ${{ matrix.stack_name }}
           file: ${{ matrix.stack_compose_path }}
