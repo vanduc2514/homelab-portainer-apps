@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
+      has_stacks: ${{ steps.set-matrix.outputs.has_stacks }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -22,8 +23,10 @@ jobs:
           echo "Scanning for stacks..."
           matrix='{"include":['
           first=1
+          has_stacks=false
           for dir in stacks/*; do
             if [ -d "$dir" ] && [ -f "$dir/docker-compose.yml" ]; then
+              has_stacks=true
               stack_name=$(basename "$dir")
               stack_definition="$dir/docker-compose.yml"
               if [ $first -eq 1 ]; then
@@ -38,10 +41,12 @@ jobs:
           matrix+=']}'
           echo "Resulting matrix: $matrix"
           echo "::set-output name=matrix::$matrix"
+          echo "::set-output name=has_stacks::$has_stacks"
 
   deploy-stacks-matrix:
     name: Deploy Stacks to Portainer
     needs: generate-deployment-stacks-matrix
+    if: ${{ needs.generate-deployment-stacks-matrix.outputs.has_stacks == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
