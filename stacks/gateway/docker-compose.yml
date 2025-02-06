@@ -12,23 +12,23 @@ services:
       TRAEFIK_PLUGIN_KEYCLOAKOPENID_CLIENT_SECRET:
         ${TRAEFIK_PLUGIN_KEYCLOAKOPENID_CLIENT_SECRET}
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /etc/ssl/certs:/etc/ssl/certs
-      - ./traefik.yml:/etc/traefik/traefik.yml
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/ssl/certs:/etc/ssl/certs/host:ro
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
       - ./dynamic:/etc/traefik/dynamic
-      - ./custom-entrypoint.sh:/custom-entrypoint.sh
+      - ./custom-entrypoint.sh:/custom-entrypoint.sh:ro
     networks:
       - external-routing
       - cloudflared
 
   cloudflared:
-    image: cloudflare/cloudflared:2025.1.0
+    image: cloudflare/cloudflared:2025.2.0
     container_name: cloudflared
     restart: unless-stopped
-    command: tunnel --no-autoupdate run
+    command: ["tunnel", "run"]
+    user: "1000"
     environment:
       TUNNEL_TOKEN: ${CLOUDFLARED_TUNNEL_TOKEN}
-    user: "1000"
     networks:
       - cloudflared
 
