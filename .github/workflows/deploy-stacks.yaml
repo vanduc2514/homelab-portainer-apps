@@ -71,14 +71,22 @@ jobs:
       - name: Change to stack directory
         id: change-directory
         run: cd $(dirname "${{ matrix.stack_compose_path }}")
+      
+      - name: Normalize stack name
+        # Example: If stack name is gateway then normalized name will be `STACK_GATEWAY`. 
+        # If stack name is ai-model then normalized name will be STACK_AI_MODEL
+        id: normalize-stack-name
+        run: |
+          echo "::set-output name=normalized_stack_name::STACK_$(echo '${{ matrix.stack_name }}' \
+          | tr ' ' '_' \
+          | tr '-' '_' \
+          | tr '[:lower:]' '[:upper:]')"
 
       - name: Create .env file
         # This step navigates to the parent directory of the docker-compose.yml file
         # and creates a .env file with environment variables retrieved from a GitHub secret dynamically from the task name.
-        # Example: If the stack name is gateway then the secret key will be `stack_gateway`. If the stack name is ai-model
-        # then the secret key will be stack_ai-model
         id: create-env-file
-        run: echo "${{ secrets[format('stack_{0}', matrix.stack_name)] }}" > .env
+        run: echo "${{ secrets[steps.normalize-stack-name.outputs.normalized_stack_name] }}" > .env
         shell: bash
 
       - name: Deploy stack to Portainer
