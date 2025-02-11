@@ -16,7 +16,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Generate matrix from /stacks directory 
+      # This step scans the stacks directory for subdirectories containing a docker-compose.yml file.
+      # It constructs a JSON matrix of these stacks, setting outputs for use in subsequent steps.
+      # Example: If the stacks directory contains "stack1" and "stack2" with docker-compose.yml files,
+      # the resulting matrix will be:
+      # {
+      #   "include": [
+      #     {"stack_name": "stack1", "stack_compose_path": "stacks/stack1/docker-compose.yml"},
+      #     {"stack_name": "stack2", "stack_compose_path": "stacks/stack2/docker-compose.yml"}
+      #   ]
+      # }
+      - name: Generate matrix from stacks directory 
         id: set-matrix
         shell: bash
         run: |
@@ -53,11 +63,26 @@ jobs:
       GITHUB_REF: ${{ github.ref }}
     strategy:
       matrix: ${{ fromJson(needs.generate-deployment-stacks-matrix.outputs.matrix) }}
+    # Loop through each element in the include matrix generated from the previous stage
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Change to stack directory
+        id: change-directory
+        run: cd $(dirname "${{ matrix.stack_compose_path }}")
+
+      - name: Create .env file
+        # This step navigates to the parent directory of the docker-compose.yml file
+        # and creates a .env file with environment variables retrieved from a GitHub secret dynamically from the task name.
+        # Example: If the stack name is gateway then the secret key will be `stack_gateway`. If the stack name is ai-model
+        # then the secret key will be stack_ai-model
+        id: create-env-file
+        run: echo "${{ secrets[format('stack_{0}', matrix.stack_name)] }}" > .env
+        shell: bash
+
       - name: Deploy stack to Portainer
+        id: deploy-to-portainer
         uses: cssnr/portainer-stack-deploy-action@v1
         with:
           url: ${{ vars.PORTAINER_HOST }}
@@ -67,3 +92,4 @@ jobs:
           ref: refs/heads/main
           name: ${{ matrix.stack_name }}
           file: ${{ matrix.stack_compose_path }}
+          env_file: .env
