@@ -91,7 +91,7 @@ jobs:
 
       - name: Deploy stack to Portainer
         id: deploy-to-portainer
-        uses: cssnr/portainer-stack-deploy-action@v1
+        uses: vanduc2514/portainer-stack-deploy-action@v1
         with:
           url: ${{ vars.PORTAINER_HOST }}
           token: ${{ secrets.PORTAINER_TOKEN }}
@@ -101,3 +101,4 @@ jobs:
           name: ${{ matrix.stack_name }}
           file: ${{ matrix.stack_compose_path }}
           env_file: .env
+          fs_path: /mnt
