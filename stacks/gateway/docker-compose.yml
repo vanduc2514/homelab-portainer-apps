@@ -17,7 +17,7 @@ services:
       - ./dynamic:/etc/traefik/dynamic
       - ./custom-entrypoint.sh:/custom-entrypoint.sh:ro
     networks:
-      # - external-routing
+      - external-routing
       - cloudflared
 
   cloudflared:
@@ -38,7 +38,7 @@ services:
     user: "1000"
     labels:
       - traefik.enable=true
-      - traefik.docker.network=external-routing
+      - traefik.docker.network=gateway_external-routing
       - traefik.http.routers.whoami.rule=Host(`whoami.vanduc2514.io.vn`)
       - traefik.http.routers.whoami.entrypoints=websecure
       - traefik.http.routers.whoami.service=whoami
