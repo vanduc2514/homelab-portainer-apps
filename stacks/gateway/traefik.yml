@@ -5,10 +5,13 @@ log:
   level: DEBUG
 
 # Define entry points for incoming traffic
-entryPoints:  
+entryPoints:
   # HTTPS entry point on port 443
   websecure:
     address: ":443"
+    asDefault: true
+    http:
+      tls: {}
 
 # Configure providers that Traefik will use to discover services
 providers:
@@ -19,6 +22,8 @@ providers:
     endpoint: "unix:///var/run/docker.sock"
     # Services must be explicitly enabled in Docker labels
     exposedByDefault: false
+    defaultRule:  "Host(`{{ normalize .Name }}.vanduc2514.io.vn`)"
+    network: "gateway_external-routing"
   
   # File provider configuration
   file:
