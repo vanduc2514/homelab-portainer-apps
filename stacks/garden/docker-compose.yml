@@ -1,0 +1,12 @@
+services:
+  portfolio:
+    image: git.vanduc2514.io.vn/vanduc2514/portfolio:1.0
+    container_name: portfolio
+    restart: unless-stopped
+    networks:
+      - external-routing
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.portfolio.rule=Host(`vanduc2514.io.vn`) || Host(`nvduc.dev`)
+      - traefik.http.routers.portfolio.service=portfolio
+      - traefik.http.services.portfolio.loadbalancer.server.port=80
