@@ -91,7 +91,7 @@ jobs:
 
       - name: Deploy stack to Portainer
         id: deploy-to-portainer
-        uses: vanduc2514/portainer-stack-deploy-action@v1.0.1
+        uses: vanduc2514/portainer-stack-deploy-action@v1.0.2
         with:
           url: ${{ vars.PORTAINER_HOST }}
           token: ${{ secrets.PORTAINER_TOKEN }}
