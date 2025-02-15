@@ -17,7 +17,7 @@ services:
       - ./dynamic:/etc/traefik/dynamic
       - ./custom-entrypoint.sh:/custom-entrypoint.sh:ro
     networks:
-      - external-routing
+      # - external-routing
       - cloudflared
 
   cloudflared:
