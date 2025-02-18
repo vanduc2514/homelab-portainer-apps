@@ -1,6 +1,6 @@
 services:
   portfolio:
-    image: git.vanduc2514.io.vn/vanduc2514/portfolio:1.0
+    image: ghcr.io/vanduc2514/portfolio:main
     container_name: portfolio
     restart: unless-stopped
     networks:
